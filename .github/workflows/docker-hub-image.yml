@@ -1,0 +1,89 @@
+name: Docker Hub Image
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */6 * * *'
+
+jobs:
+  fetch_release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Fetch Latest TDM Release
+        id: fetch_tdm_release
+        run: |
+          # Fetch all releases from the GitHub API
+          ALL_RELEASES=$(curl -s "https://api.github.com/repos/DevilXD/TwitchDropsMiner/releases")
+          
+          # Filter for prerelease releases and select the desired asset
+          RELEASE_DATA=$(echo "$ALL_RELEASES" | jq -r '
+            .[] 
+            | select(.prerelease) 
+            | {tag: .tag_name, asset: (.assets[] | select(.name == "Twitch.Drops.Miner.Linux.PyInstaller-x86_64.zip"))} 
+            | select(.asset) 
+            | .asset.updated_at + " " + .tag
+          ' | head -n 1)
+          
+          # Extract the asset updated_at and release tag name
+          ASSET_UPDATED_AT=$(echo "$RELEASE_DATA" | cut -d' ' -f1)
+          echo "Latest TDM Asset updated_at: $ASSET_UPDATED_AT"
+          echo "tdm_release_tag=$ASSET_UPDATED_AT" >> $GITHUB_ENV
+          
+
+      - name: Check If Release Tag Has Changed
+        id: check_release
+        run: |
+          RELEASE_FILE=".release_tag"
+          
+          STORED_TDM_RELEASE=$(cat $RELEASE_FILE)
+          if [ "$STORED_TDM_RELEASE" != "${{ env.tdm_release_tag }}" ]; then
+            echo "Release tag has changed from $STORED_TDM_RELEASE to ${{ env.tdm_release_tag }}"
+            echo "${{ env.tdm_release_tag }}" > $RELEASE_FILE
+            echo "release_changed=true" >> $GITHUB_ENV
+          else
+            echo "Release tag has not changed."
+            echo "release_changed=false" >> $GITHUB_ENV
+          fi
+
+      - name: Commit And Push Stored Release Tag
+        if: env.release_changed == 'true'
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          git pull --rebase --autostash origin HEAD
+          git push origin HEAD
+  
+          git add .release_tag
+          git commit -m "Update release tag to ${{ env.tdm_release_tag }}"
+          git push origin HEAD
+    outputs:
+      release_changed: ${{ env.release_changed }}
+      tdm_release_tag: ${{ env.tdm_release_tag }}
+
+  build:
+    runs-on: ubuntu-latest
+    needs: fetch_release
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Skip Build If Release Tag Unchanged
+        if: needs.fetch_release.outputs.release_changed == 'false'
+        run: |
+          echo "Release tag has not changed. Skipping actions."
+
+      - name: Build If Release Tag Changes
+        if: needs.fetch_release.outputs.release_changed == 'true'
+        env:
+          DOCKER_HUB_NAME: ${{ secrets.DOCKER_HUB_NAME }}
+          DOCKER_HUB_KEY: ${{ secrets.DOCKER_HUB_KEY }}
+        run: |
+          docker login -u $DOCKER_HUB_NAME -p $DOCKER_HUB_KEY
+          docker build . --build-arg APP_VERSION_ARG=${{ needs.fetch_release.outputs.tdm_release_tag }} --pull --no-cache --tag gamerdachs/dockerized-twitch-drops-miner:latest
+          docker push gamerdachs/dockerized-twitch-drops-miner:latest
