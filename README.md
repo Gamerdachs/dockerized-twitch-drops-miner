@@ -26,13 +26,14 @@ services:
     image: gamerdachs/dockerized-twitch-drops-miner:latest
     container_name: twitch-drops-miner
     ports:
-      - "5800:5800"
+      - 5800:5800
     volumes:
-      - /path/to/your/config:/config:rw
+      - ./data:/TwitchDropsMiner/config
+      - ./data:/config
     restart: unless-stopped
 ```
 
-Replace `/path/to/your/config` with the actual path on your host machine where you want to store the Twitch Drops Miner's configuration and cookies. This ensures persistence across container restarts.
+Replace `./data` with the actual path on your host machine where you want to store the Twitch Drops Miner's configuration and cookies. This ensures persistence across container restarts.
 
 Once you have created the `compose.yaml` file, navigate to the directory containing the file in your terminal and run the following command:
 
@@ -41,8 +42,8 @@ docker compose up -d
 ```
 
 *   `docker compose up -d`: This command starts the `twitch-drops-miner` service in detached mode (in the background).
-*   `ports: - "5800:5800"`: This maps port 5800 of your host to port 5800 inside the container. This is the port where the web-based GUI will be accessible.
-*   `volumes: - /path/to/your/config:/config:rw`: This mounts a local directory on your host machine to the `/config` directory inside the container. This is where the Twitch Drops Miner's configuration and cookies will be stored, ensuring persistence across container restarts.
+*   `ports: - 5800:5800`: This maps port 5800 of your host to port 5800 inside the container. This is the port where the web-based GUI will be accessible.
+*   `volumes: - ./data:/TwitchDropsMiner/config - ./data:/config`: This mounts a local directory on your host machine to the `/config` directory inside the container. This is where the Twitch Drops Miner's configuration and cookies will be stored, ensuring persistence across container restarts.
 *   `restart: unless-stopped`: This ensures the container will restart automatically unless it is explicitly stopped.
 
 ## Accessing the Application
