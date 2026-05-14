@@ -9,7 +9,12 @@ ENV APP_ICON_URL="https://raw.githubusercontent.com/DevilXD/TwitchDropsMiner/mas
 
 # Install latest Twitch Drops Miner
 RUN apt-get update -y \
-    && apt-get install -y fonts-noto-color-emoji gir1.2-appindicator3-0.1 language-pack-en libc6 unzip wget \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        fonts-noto-color-emoji \
+        gir1.2-appindicator3-0.1 \
+        language-pack-en \
+        unzip \
+        wget \
     && apt-get clean \
     && wget -P /tmp/ https://github.com/DevilXD/TwitchDropsMiner/releases/download/dev-build/Twitch.Drops.Miner.Linux.PyInstaller-x86_64.zip \
     && mkdir /TwitchDropsMiner \
