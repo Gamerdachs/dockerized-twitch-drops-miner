@@ -48,7 +48,7 @@ RUN \
     && ln -s /TwitchDropsMiner/config/cache /TwitchDropsMiner/cache \
     && printf '#!/bin/sh\nset -e\nmkdir -p /TwitchDropsMiner/config/cache\nmkdir -p "$HOME/.config/autostart"\nchown -R "$USER_ID:$GROUP_ID" /TwitchDropsMiner /TwitchDropsMiner/config\n' > /etc/cont-init.d/55-twitch-drops-miner.sh \
     && chmod +x /etc/cont-init.d/55-twitch-drops-miner.sh \
-    && printf '#!/bin/sh\ncd /TwitchDropsMiner\nexport HOME=/TwitchDropsMiner/config\nexec s6-setuidgid 1000:1000 /TwitchDropsMiner/TwitchDropsMiner\n' > /startapp.sh \
+    && printf '#!/bin/sh\ncd /TwitchDropsMiner\nexec /TwitchDropsMiner/TwitchDropsMiner\n' > /startapp.sh \
     && chmod +x /startapp.sh \
     && install_app_icon.sh "$APP_ICON_URL" \
     && set-cont-env APP_NAME "Twitch Drops Miner" \
