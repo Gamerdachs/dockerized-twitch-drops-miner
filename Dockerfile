@@ -7,10 +7,11 @@ ARG APP_VERSION_ARG
 # Environment
 ENV APP_ICON_URL="https://raw.githubusercontent.com/DevilXD/TwitchDropsMiner/master/appimage/pickaxe.png"
 
-# Install latest Twitch Drops Miner
+# Install latest Twitch Drops Miner and Chromium browser for zendriver auth
 RUN \
     add-pkg \
         ca-certificates \
+        chromium \
         fonts-noto-color-emoji \
         gir1.2-appindicator3-0.1 \
         language-pack-en \
