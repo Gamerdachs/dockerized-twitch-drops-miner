@@ -30,6 +30,7 @@ services:
     environment:
       - USER_ID=1000
       - GROUP_ID=1000
+      - TZ=Europe/Berlin
     volumes:
       - ./data:/TwitchDropsMiner/config
     restart: unless-stopped
@@ -48,6 +49,7 @@ docker compose up -d
 *   `environment:`:
     *   `USER_ID=1000`: The User ID (UID) the application runs under. Helps avoid permission issues between the host and container.
     *   `GROUP_ID=1000`: The Group ID (GID) the application runs under. Helps avoid permission issues between the host and container.
+    *   `TZ=Europe/Berlin`: The [timezone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) of your internet connection. **Required for login:** the container defaults to `UTC`, and Twitch rejects the browser login with "Your browser is not currently supported." if the browser timezone does not match the location of your IP address.
 *   `volumes: - ./data:/TwitchDropsMiner/config`: This mounts a local directory on your host machine to the `/TwitchDropsMiner/config` directory inside the container. This is where the Twitch Drops Miner's configuration and cookies will be stored, ensuring persistence across container restarts.
 *   `restart: unless-stopped`: This ensures the container will restart automatically unless it is explicitly stopped.
 
