@@ -20,12 +20,13 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v6
 
-      - name: Fetch Latest TDM Release
+      - name: Fetch Latest TDM dev-build Asset Timestamp
         id: fetch_tdm_release
         run: |
           ALL_RELEASES=$(curl -fsSL -H "Authorization: Bearer ${{ github.token }}" \
             "https://api.github.com/repos/DevilXD/TwitchDropsMiner/releases")
           
+          # The existing binary asset timestamp tracks changes to the dev-build source release.
           RELEASE_DATA=$(echo "$ALL_RELEASES" | jq -r '
             .[] 
             | select(.prerelease) 
@@ -39,7 +40,7 @@ jobs:
             echo "Error: Could not fetch latest asset updated_at timestamp."
             exit 1
           fi
-          echo "Latest TDM Asset updated_at: $ASSET_UPDATED_AT"
+          echo "Latest TDM dev-build asset updated_at: $ASSET_UPDATED_AT"
           
           echo "tdm_release_tag=$ASSET_UPDATED_AT" >> $GITHUB_ENV
           

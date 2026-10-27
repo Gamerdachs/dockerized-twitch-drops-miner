@@ -4,7 +4,7 @@ This project provides a Dockerized version of the Twitch Drops Miner application
 
 ## How it Works
 
-The Docker image is built based on the [`jlesage/baseimage-gui`](https://hub.docker.com/r/jlesage/baseimage-gui) which provides a web-based GUI for the application. The workflow automatically fetches the latest pre-release of Twitch Drops Miner, builds the Docker image, and pushes it to Docker Hub.
+The Docker image is built based on [`jlesage/baseimage-gui`](https://hub.docker.com/r/jlesage/baseimage-gui), which provides a web-based GUI for the application. It runs Twitch Drops Miner from the upstream Python source in a virtual environment and includes Google Chrome for browser-based Twitch login. The workflow monitors the latest pre-release asset timestamp to detect upstream updates, builds the image, and pushes it to Docker Hub.
 
 ## Building the Docker Image
 
@@ -46,8 +46,8 @@ docker compose up -d
 *   `docker compose up -d`: This command starts the `twitch-drops-miner` service in detached mode (in the background).
 *   `ports: - 5800:5800`: This maps port 5800 of your host to port 5800 inside the container. This is the port where the web-based GUI will be accessible.
 *   `environment:`:
-    *   `PUID=1000`: The User ID (UID) the application runs under. Helps avoid permission issues between the host and container.
-    *   `PGID=1000`: The Group ID (GID) the application runs under. Helps avoid permission issues between the host and container.
+    *   `USER_ID=1000`: The User ID (UID) the application runs under. Helps avoid permission issues between the host and container.
+    *   `GROUP_ID=1000`: The Group ID (GID) the application runs under. Helps avoid permission issues between the host and container.
 *   `volumes: - ./data:/TwitchDropsMiner/config`: This mounts a local directory on your host machine to the `/TwitchDropsMiner/config` directory inside the container. This is where the Twitch Drops Miner's configuration and cookies will be stored, ensuring persistence across container restarts.
 *   `restart: unless-stopped`: This ensures the container will restart automatically unless it is explicitly stopped.
 
