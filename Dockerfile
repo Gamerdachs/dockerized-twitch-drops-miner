@@ -7,7 +7,7 @@ ARG APP_VERSION_ARG
 # Environment
 ENV APP_ICON_URL="https://raw.githubusercontent.com/DevilXD/TwitchDropsMiner/master/appimage/pickaxe.png"
 
-# Install latest Twitch Drops Miner and Chromium browser for zendriver auth
+# Install latest Twitch Drops Miner and Google Chrome
 RUN \
     add-pkg \
         ca-certificates \
@@ -46,9 +46,11 @@ RUN \
     && ln -s /TwitchDropsMiner/config/cookies.jar /TwitchDropsMiner/cookies.jar \
     && ln -s /TwitchDropsMiner/config/log.txt /TwitchDropsMiner/log.txt \
     && ln -s /TwitchDropsMiner/config/cache /TwitchDropsMiner/cache \
+    && printf '#!/bin/sh\nexec /opt/google/chrome/google-chrome --no-sandbox --disable-setuid-sandbox --disable-dev-shm-usage "$@"\n' > /usr/local/bin/google-chrome-wrapper \
+    && chmod +x /usr/local/bin/google-chrome-wrapper \
     && printf '#!/bin/sh\nset -e\nmkdir -p /TwitchDropsMiner/config/cache\nmkdir -p "$HOME/.config/autostart"\nchown -R "$USER_ID:$GROUP_ID" /TwitchDropsMiner /TwitchDropsMiner/config\n' > /etc/cont-init.d/55-twitch-drops-miner.sh \
     && chmod +x /etc/cont-init.d/55-twitch-drops-miner.sh \
-    && printf '#!/bin/sh\ncd /TwitchDropsMiner\nexport CHROME_ARGS="--no-sandbox --disable-setuid-sandbox --disable-dev-shm-usage"\nexec /TwitchDropsMiner/TwitchDropsMiner\n' > /startapp.sh \
+    && printf '#!/bin/sh\ncd /TwitchDropsMiner\nexport CHROME_PATH="/usr/local/bin/google-chrome-wrapper"\nexec /TwitchDropsMiner/TwitchDropsMiner\n' > /startapp.sh \
     && chmod +x /startapp.sh \
     && install_app_icon.sh "$APP_ICON_URL" \
     && set-cont-env APP_NAME "Twitch Drops Miner" \
