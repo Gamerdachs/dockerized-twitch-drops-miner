@@ -11,14 +11,32 @@ ENV APP_ICON_URL="https://raw.githubusercontent.com/DevilXD/TwitchDropsMiner/mas
 RUN \
     add-pkg \
         ca-certificates \
-        chromium \
         fonts-noto-color-emoji \
         gir1.2-appindicator3-0.1 \
         language-pack-en \
         unzip \
         wget \
-        systemd- \
-        systemd-sysv- \
+        libglib2.0-0 \
+        libnss3 \
+        libatk1.0-0 \
+        libatk-bridge2.0-0 \
+        libcups2 \
+        libdrm2 \
+        libdbus-1-3 \
+        libgdk-pixbuf2.0-0 \
+        libnspr4 \
+        libpango-1.0-0 \
+        libxcomposite1 \
+        libxdamage1 \
+        libxfixes3 \
+        libxrandr2 \
+        libgbm1 \
+        libpci3 \
+        libasound2t64 \
+        fonts-liberation \
+    && wget -qO /tmp/chromium.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
+    && apt-get update && apt-get install -y /tmp/chromium.deb \
+    && rm -f /tmp/chromium.deb \
     && wget -P /tmp/ https://github.com/DevilXD/TwitchDropsMiner/releases/download/dev-build/Twitch.Drops.Miner.Linux.PyInstaller-x86_64.zip \
     && mkdir -p /TwitchDropsMiner/config/cache \
     && unzip -p /tmp/Twitch.Drops.Miner.Linux.PyInstaller-x86_64.zip "Twitch Drops Miner/Twitch Drops Miner (by DevilXD)" > /TwitchDropsMiner/TwitchDropsMiner \
