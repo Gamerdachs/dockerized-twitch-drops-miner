@@ -28,8 +28,8 @@ services:
     ports:
       - 5800:5800
     environment:
-      - PUID=1000
-      - PGID=1000
+      - USER_ID=1000
+      - GROUP_ID=1000
     volumes:
       - ./data:/TwitchDropsMiner/config
     restart: unless-stopped
