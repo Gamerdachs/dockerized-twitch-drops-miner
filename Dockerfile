@@ -27,7 +27,7 @@ RUN \
     && ln -s /TwitchDropsMiner/config/cookies.jar /TwitchDropsMiner/cookies.jar \
     && ln -s /TwitchDropsMiner/config/log.txt /TwitchDropsMiner/log.txt \
     && ln -s /TwitchDropsMiner/config/cache /TwitchDropsMiner/cache \
-    && printf '#!/usr/bin/with-contenv sh\nmkdir -p /TwitchDropsMiner/config/cache\nchown -R "$USER_ID:$GROUP_ID" /TwitchDropsMiner /TwitchDropsMiner/config\n' > /etc/cont-init.d/55-twitch-drops-miner.sh \
+    && printf '#!/bin/sh\nset -e\nmkdir -p /TwitchDropsMiner/config/cache\nchown -R "$USER_ID:$GROUP_ID" /TwitchDropsMiner /TwitchDropsMiner/config\n' > /etc/cont-init.d/55-twitch-drops-miner.sh \
     && chmod +x /etc/cont-init.d/55-twitch-drops-miner.sh \
     && printf '#!/bin/sh\ncd /TwitchDropsMiner\nexec /TwitchDropsMiner/TwitchDropsMiner\n' > /startapp.sh \
     && chmod +x /startapp.sh \
