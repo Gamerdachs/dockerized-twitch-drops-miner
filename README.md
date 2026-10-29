@@ -38,6 +38,8 @@ services:
 
 Replace `./data` with the actual path on your host machine where you want to store the Twitch Drops Miner's configuration and cookies. This ensures persistence across container restarts.
 
+Settings saved by older containers may have been stored only in the container layer and are not migrated automatically. You may need to set them again once after updating the image.
+
 Once you have created the `compose.yaml` file, navigate to the directory containing the file in your terminal and run the following command:
 
 ```bash

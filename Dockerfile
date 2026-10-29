@@ -8,6 +8,8 @@ ARG TDM_REF=dev-build
 # Environment
 ENV APP_ICON_URL="https://raw.githubusercontent.com/DevilXD/TwitchDropsMiner/master/appimage/pickaxe.png"
 
+COPY docker_launcher.py /TwitchDropsMiner/docker_launcher.py
+
 # Install latest Twitch Drops Miner from source.
 RUN \
     add-pkg \
@@ -38,13 +40,9 @@ RUN \
     && grep -v 'PyGObject' /TwitchDropsMiner/requirements.txt > /tmp/tdm-requirements.txt \
     && /TwitchDropsMiner/env/bin/pip install --no-cache-dir -r /tmp/tdm-requirements.txt \
     && rm -f /tmp/tdm-requirements.txt \
-    && ln -s /TwitchDropsMiner/config/settings.json /TwitchDropsMiner/settings.json \
-    && ln -s /TwitchDropsMiner/config/cookies.jar /TwitchDropsMiner/cookies.jar \
-    && ln -s /TwitchDropsMiner/config/log.txt /TwitchDropsMiner/log.txt \
-    && ln -s /TwitchDropsMiner/config/cache /TwitchDropsMiner/cache \
     && printf '#!/bin/sh\nset -e\nmkdir -p /TwitchDropsMiner/config/cache\nmkdir -p "$HOME/.config/autostart"\nchown -R "$USER_ID:$GROUP_ID" /TwitchDropsMiner /TwitchDropsMiner/config\n' > /etc/cont-init.d/55-twitch-drops-miner.sh \
     && chmod +x /etc/cont-init.d/55-twitch-drops-miner.sh \
-    && printf '#!/bin/sh\ncd /TwitchDropsMiner\nexec /TwitchDropsMiner/env/bin/python main.py\n' > /startapp.sh \
+    && printf '#!/bin/sh\ncd /TwitchDropsMiner\nexec /TwitchDropsMiner/env/bin/python docker_launcher.py\n' > /startapp.sh \
     && chmod +x /startapp.sh \
     && install_app_icon.sh "$APP_ICON_URL" \
     && set-cont-env APP_NAME "Twitch Drops Miner" \
